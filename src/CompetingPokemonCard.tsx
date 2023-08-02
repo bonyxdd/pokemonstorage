@@ -1,4 +1,5 @@
-export const PokemonCard = ({ pokemon, index, button, onSelect }: any) => {
+import { Link } from "react-router-dom";
+export const CompetingPokemonCard = ({ pokemon, index, link }: any) => {
   return (
     <div className="pokemonCard" key={index}>
       <div className="top-info">
@@ -16,12 +17,11 @@ export const PokemonCard = ({ pokemon, index, button, onSelect }: any) => {
         className="pokemonImg"
         src={pokemon.sprites.other["official-artwork"].front_default}
         alt={pokemon.name}
-          />
-      {button ? (
-        <button onClick={()=> onSelect(pokemon)}>I choose this one!</button>
-        
-        ): (
-        null
+      />
+      {link ? (
+        <Link to={link}>I choose this one!</Link>      
+      ): (
+          null
       )}
     </div>
   );

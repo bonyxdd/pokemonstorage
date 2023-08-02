@@ -45,6 +45,7 @@ type Pokemon = [];
           <p>Total Pokemons: {allPokemons.length}</p>
           </div>
         <div className="pokemonContainer">
+          <p></p>
         <div className="pokemonWrapper">
           {allPokemons.map((pokemon, index) =>
             <PokemonCard pokemon={pokemon} key={index}
