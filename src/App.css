@@ -1,4 +1,8 @@
-h1{
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1,h2{
     margin-top: 0;
   }
   nav ul{
@@ -8,10 +12,15 @@ h1{
   li{
     list-style: none;
   }
-  .buttonContainer, .pokemonContainer{
+  .buttonContainer{
     display: flex;
     justify-content: center;
     padding: 2rem 10rem;
+  }
+  .pokemonContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .pokemonWrapper{
     display: flex;
@@ -19,6 +28,7 @@ h1{
     flex-wrap: wrap;
     justify-content: center;
     gap: 2rem;
+    padding: 2rem 10rem;
   }
   .pokemonCard{
     color: #fff;
@@ -43,4 +53,14 @@ h1{
     display: flex;
     justify-content: space-between;
     gap: 5rem;
+  }
+  .moveWrap{
+    display: flex;
+    gap: 1rem;
+  }
+  .moveInfo{
+    width: 8rem;
+    background-color: rgb(22, 22, 22);
+    border-radius: 1rem;
+    padding: 2rem 1rem;
   }

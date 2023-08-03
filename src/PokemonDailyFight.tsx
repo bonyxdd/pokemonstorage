@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import { PokemonCard } from "./PokemonCard";
+import FightLogic from "./FightLogic";
 
 type Pokemon = {
   name: string;
@@ -10,9 +11,8 @@ type Pokemon = {
 
 function PokemonDailyFight() {
   const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
-  const [serverPokemon, setServerPokemon] = useState<Pokemon>();
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>();
-  const PokeSelected = localStorage.getItem("selectedPokemon");
+  const [lastPokemon, setLastPokemon] = useState<Pokemon>();
 
   function handlePokemonSelect(pokemon: any) {
     setSelectedPokemon(pokemon);
@@ -37,29 +37,28 @@ function PokemonDailyFight() {
       );
       const responses = await Promise.all(pokemonPromises);
       const pokemonsData = responses.map((response) => response.data);
-      const lastPokemon = pokemonsData.pop();
+      const serPokemon = pokemonsData[3];
       localStorage.clear();
+      setLastPokemon(serPokemon as Pokemon);
       setSelectedPokemon(null);
       setAllPokemons(pokemonsData as Pokemon[]);
       localStorage.setItem("allPokemons", JSON.stringify(pokemonsData));
-      setServerPokemon(lastPokemon);
-      localStorage.setItem("serverPokemon", JSON.stringify(lastPokemon));
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
     const storedPokemons = localStorage.getItem("allPokemons");
-    const storedServerPokemon = localStorage.getItem("serverPokemon")
-    if (storedPokemons && storedServerPokemon) {
-      setAllPokemons(JSON.parse(storedPokemons) as Pokemon[]);
-      setServerPokemon(JSON.parse(storedServerPokemon) as Pokemon);
+    if (storedPokemons) {
+      const parsedPokemons = JSON.parse(storedPokemons) as Pokemon[];
+      setAllPokemons(parsedPokemons);
+      setLastPokemon(parsedPokemons[3]);
     } else {
       getPokemons();
     }
     const now = new Date();
     const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0);
+    midnight.setHours(20, 9, 10, 0);
     if (now > midnight) {
       midnight.setDate(midnight.getDate() + 1);
     }
@@ -71,7 +70,7 @@ function PokemonDailyFight() {
       const nextTimeTilMidnight = nextMidnight.getTime() - new Date().getTime();
       setTimeout(getPokemonsAndSetInterval, nextTimeTilMidnight);
     };
-  
+
     setTimeout(getPokemonsAndSetInterval, timeTilMidnight);
     const selected = localStorage.getItem("selectedPokemon");
     if (selected) {
@@ -80,25 +79,24 @@ function PokemonDailyFight() {
   }, []);
   return (
     <>
+      <button onClick={() => localStorage.clear()}></button>
       <p>Pokemons refresh at midnight</p>
-      <div className="pokemonFightWrapper">
-      </div>
       {selectedPokemon ? (
         <div className="pokemonContainer">
-          {serverPokemon && (
-            <>
-              <PokemonCard pokemon={serverPokemon}/>
-              <PokemonCard pokemon={selectedPokemon}/>
-            </>
-          )}
-        </div>
+          <FightLogic enemyPokemon={lastPokemon} userPokemon={selectedPokemon} />
+          </div>
       ) : (
         <>
           <p>Please choose your fighter!</p>
           <div className="pokemonContainer">
             <div className="pokemonWrapper">
-              {allPokemons.map((pokemon, index) => (
-                <PokemonCard pokemon={pokemon} key={index} button={true} onSelect={handlePokemonSelect} />
+              {allPokemons.slice(0, 3).map((pokemon, index) => (
+                <PokemonCard
+                  pokemon={pokemon}
+                  key={index}
+                  button={true}
+                  onSelect={handlePokemonSelect}
+                />
               ))}
             </div>
           </div>
